@@ -3,6 +3,8 @@ name: ci
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - services/hello-world
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -21,8 +23,11 @@ jobs:
       packages: write
 
     steps:
+      # https://github.com/actions/checkout
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          sparse-checkout: services/hello-world
 
       # https://github.com/docker/setup-buildx-action
       # https://docs.docker.com/build/ci/github-actions/configure-builder/
@@ -55,7 +60,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
-          context: .
+          context: ./services/hello-world
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
