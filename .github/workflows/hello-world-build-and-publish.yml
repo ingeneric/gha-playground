@@ -3,6 +3,7 @@ name: CI/hello-world
 on:
   push:
     branches: [ "main" ]
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#patterns-to-match-file-paths
     paths:
       - 'services/hello-world/**'
 
@@ -66,3 +67,11 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+
+      # https://github.com/marketplace/actions/workflow-webhook-action
+      - name: Invoke deployment hook
+        uses: distributhor/workflow-webhook@v3
+        env:
+          webhook_url: ${{ secrets.WEBHOOK_URL }}
+          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+          data: ${{ steps.meta.outputs.json }}
