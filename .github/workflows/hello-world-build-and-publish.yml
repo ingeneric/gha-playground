@@ -23,7 +23,7 @@ jobs:
       packages: write
 
     outputs:
-      meta: ${{ steps.meta.outputs.json }}
+      docker-image-metadata: ${{ steps.meta.outputs.json }}
 
     steps:
       # https://github.com/actions/checkout
@@ -82,4 +82,4 @@ jobs:
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: ${{ needs.build.meta }}
+          data: ${{ needs.build.outputs.docker-image-metadata }}
