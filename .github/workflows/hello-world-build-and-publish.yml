@@ -1,4 +1,4 @@
-name: CI/hello-world
+name: CI / hello-world
 
 on:
   push:
@@ -16,12 +16,14 @@ env:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     permissions:
       contents: read
       packages: write
+
+    outputs:
+      meta: ${{ steps.meta.outputs.json }}
 
     steps:
       # https://github.com/actions/checkout
@@ -68,10 +70,16 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
       # https://github.com/marketplace/actions/workflow-webhook-action
       - name: Invoke deployment hook
         uses: distributhor/workflow-webhook@v3
         env:
           webhook_url: ${{ secrets.WEBHOOK_URL }}
           webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: ${{ steps.meta.outputs.json }}
+          data: ${{ needs.build.meta }}
