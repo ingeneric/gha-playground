@@ -1,1 +1,1 @@
-FROM hello-world
+FROM nginx:1.24.0
