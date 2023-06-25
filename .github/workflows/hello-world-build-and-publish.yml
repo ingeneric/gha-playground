@@ -22,9 +22,6 @@ jobs:
       contents: read
       packages: write
 
-    outputs:
-      docker-image-metadata: ${{ steps.meta.outputs.json }}
-
     steps:
       # https://github.com/actions/checkout
       - name: Checkout repository
@@ -70,17 +67,3 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: false
-
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      # https://github.com/marketplace/actions/workflow-webhook-action
-      - name: Invoke deployment hook
-        uses: distributhor/workflow-webhook@v3
-        env:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
-          data: ${{ needs.build.outputs.docker-image-metadata }}
