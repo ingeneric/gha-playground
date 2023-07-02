@@ -1,17 +1,18 @@
 name: CI / hello-world
 
-on:
-  push:
-    branches: [ "main" ]
-    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#patterns-to-match-file-paths
-    paths:
-      - 'services/hello-world/**'
-
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
+  SERVICE_PATH: ${{ github.repository }}
+
+on:
+  push:
+    branches: [ "main" ]
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#patterns-to-match-file-paths
+    paths:
+      - "${{ env.SERVICE_PATH }}/**"
 
 
 jobs:
@@ -27,7 +28,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
         with:
-          sparse-checkout: services/hello-world
+          sparse-checkout: ${{ env.SERVICE_PATH }}
 
       # https://github.com/docker/setup-buildx-action
       # https://docs.docker.com/build/ci/github-actions/configure-builder/
@@ -60,7 +61,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v4
         with:
-          context: ./services/hello-world
+          context: ./${{ env.SERVICE_PATH }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
