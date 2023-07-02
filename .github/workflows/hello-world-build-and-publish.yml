@@ -5,7 +5,7 @@ env:
   REGISTRY: ghcr.io
   # github.repository as <account>/<repo>
   IMAGE_NAME: ${{ github.repository }}
-  SERVICE_PATH: ${{ github.repository }}
+  SERVICE_PATH: services/hello-world
 
 on:
   push:
